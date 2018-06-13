@@ -1,0 +1,3 @@
+useDynLib(Rzdd, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
