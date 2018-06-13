@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+src/*.o
+src/*.so
+src/*.dll
+src/Makevars
+.Rproj.user/
+autom4te.cache/
+
+config.log
+config.status
