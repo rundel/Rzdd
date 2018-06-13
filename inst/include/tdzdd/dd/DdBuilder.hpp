@@ -600,7 +600,7 @@ public:
 #pragma omp for schedule(dynamic)
 #endif
             for (int x = 0; x < tasks; ++x) {
-                if (nodeColumn[x] < 0) continue; // -1 for skip
+                //if (nodeColumn[x] < 0) continue; // -1 for skip
                 size_t j0 = nodeColumn[x] - 1;   // code(p) >= 1
 
                 for (int y = 0; y < threads; ++y) {

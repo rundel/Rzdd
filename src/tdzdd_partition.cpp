@@ -1,18 +1,11 @@
 #include <Rcpp.h>
 
-// [[Rcpp::plugins(cpp11)]]
-// [[Rcpp::plugins(openmp)]]
-// [[Rcpp::depends(RcppProgress)]]
-
-#include <progress.hpp>
-#include <progress_bar.hpp>
-
 #include "graph.hpp"
 #include "frontier.hpp"
 #include "util.hpp"
 
-#include <../TdZdd/include/tdzdd/DdStructure.hpp>
-#include "../TdZdd/include/tdzdd/DdSpec.hpp"
+#include "tdzdd/DdStructure.hpp"
+#include "tdzdd/DdSpec.hpp"
 
 #include <boost/functional/hash.hpp>
 
@@ -317,15 +310,19 @@ public:
   }
 };
 
-
-
+//' zdd_partition
+//' 
+//' Blah blah blah
+//'
+//' @param adj_list Adjacency list
+//' @export
 
 // [[Rcpp::export]]
-std::string
+Rcpp::XPtr<tdzdd::DdStructure<2>>
   partition_alg(std::vector<std::vector<int> > adj_list,  
                 std::vector<double> weights, 
                 double min_w, double max_w, int n_part,
-                bool debug=false)
+                bool reduce = true)
   {
     // Use 0-based indexing
     adj_list = to_0_indexing(adj_list);
@@ -333,57 +330,15 @@ std::string
     graph g(adj_list);
     frontier f(g);
     
-    double total_w = std::accumulate(weights.begin(), weights.end(), (double) 0.);
+
+    partition_zdd part(g, f, weights, min_w, max_w, n_part, false);
     
-    
-    Rcpp::Rcout << "Number of vertices  : " << adj_list.size() << "\n";
-    Rcpp::Rcout << "Number of edges     : " << g.get_n_edges() << "\n";
-    Rcpp::Rcout << "Number of partitions: " << n_part << "\n";
-    Rcpp::Rcout << "Total population    : " << total_w << "\n";
-    Rcpp::Rcout << "Minimum allowed population: " <<  min_w << "\n";
-    Rcpp::Rcout << "Maximum allowed population: " <<  max_w  << "\n";
-    
-    if (debug) {
-      g.print_edge_list();
-      g.print_adj_list();
-      f.print();
-    }
-    
-    partition_zdd part(g, f, weights, min_w, max_w, n_part, debug);
-    
-    tdzdd::DdStructure<2> dd(part, true);
-    dd.zddReduce();
-    
-    Rcpp::Rcout << "\n#node = " << dd.size() << ", " 
-                << "#solution = " << std::setprecision(10) << dd.evaluate(tdzdd::ZddCardinality<double>())
-                << "\n\n";
-    
-    
-    //std::stringstream ss;
-    //dd.dumpDot(ss, "zdd"); 
-    
-    return "test";//ss.str();
+    tdzdd::DdStructure<2>* dd = new tdzdd::DdStructure<2>(part, true);
+    if (reduce)
+      dd->zddReduce();
+
+    Rcpp::XPtr< tdzdd::DdStructure<2> > res(dd);
+    return res;
   }
 
-/*** R
-n = 6
-n_part = 2
-r = raster::raster(nrows=n, ncols=n)
-p = sf::st_as_sf(raster::rasterToPolygons(r))
 
-adj = sf::st_relate(p, pattern = "F***1****")
-
-
-
-system.time({
-  res = partition_alg(
-    adj, rep(1L, length(adj)), 
-    min_w = floor( length(adj)/n_part ), 
-    max_w = ceiling( length(adj)/n_part ), 
-    n_part = n_part,
-    debug = FALSE
-  )
-}) 
-
-#DiagrammeR::grViz(res)
-*/
