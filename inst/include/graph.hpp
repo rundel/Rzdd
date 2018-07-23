@@ -3,7 +3,7 @@
 
 // [[Rcpp::plugins(cpp11)]]
 
-typedef std::pair<int,int> edge;
+typedef std::pair<unsigned int,unsigned int> edge;
 
 // Assumes the graph is undirected
 class graph {
@@ -29,7 +29,7 @@ public:
   graph(std::vector<edge> const& edges) 
     : edge_list(edges) 
   { 
-    std::vector<int> v;
+    std::vector<unsigned int> v;
     
     for(auto const& e : edges) {
       v.push_back(e.first);
@@ -43,14 +43,14 @@ public:
     check_edge_list();
   }
   
-  graph(std::vector<std::vector<int> > const& adj_list, bool from_obi = true) {
-    int v_max = 0;
+  graph(std::vector<std::vector<unsigned int> > const& adj_list, bool from_obi = true) {
+    unsigned int v_max = 0;
     
     
     for(size_t i=0; i < adj_list.size(); i++) {
       for(size_t j=0; j < adj_list[i].size(); j++) {
-        int v_from = (int) i;
-        int v_to = adj_list[i][j] - (from_obi ? 1 : 0);
+        unsigned int v_from = i;
+        unsigned int v_to = adj_list[i][j] - (from_obi ? 1 : 0);
         
         edge_list.push_back({v_from, v_to});  
         
@@ -58,16 +58,16 @@ public:
       }
     }
     
-    n_vertices = std::max(v_max, (int) adj_list.size());  
+    n_vertices = std::max(v_max, (unsigned int) adj_list.size());  
     check_edge_list();
   }
   
-  edge make_edge(int a, int b) {
+  edge make_edge(unsigned int a, unsigned int b) {
     // Ensure that first < second
     return edge(std::min(a,b), std::max(a,b));
   } 
   
-  size_t get_n_vertices() const {
+  unsigned int get_n_vertices() const {
     return n_vertices;
   }
   
@@ -83,7 +83,7 @@ public:
     return edge_list;
   }
   
-  bool find_in_edge_list(int val, int start = 0) const {
+  bool find_in_edge_list(unsigned int val, unsigned int start = 0) const {
     for(size_t i=start; i < edge_list.size(); ++i) {
       if (edge_list[i].first == val || edge_list[i].second == val)
         return true;
@@ -92,9 +92,9 @@ public:
     return false;
   }
   
-  std::vector<std::vector<int> > to_adj_list() const {
+  std::vector<std::vector<unsigned int> > to_adj_list() const {
     
-    std::vector<std::vector<int> > adj_list(n_vertices);
+    std::vector<std::vector<unsigned int> > adj_list(n_vertices);
     
     for(auto e : edge_list) {
       adj_list[e.first].push_back(e.second);
@@ -105,7 +105,7 @@ public:
   }
   
   Rcpp::DataFrame to_dataframe(bool return_obi = true) {
-    std::vector<int> edge, v_from, v_to;
+    std::vector<unsigned int> edge, v_from, v_to;
     
     for(size_t i=0; i!=edge_list.size(); ++i) {
       edge.push_back(   i                   + (return_obi ? 1 : 0) );
@@ -121,7 +121,7 @@ public:
   }
   
   void print_edge_list() {
-    int i = 0;
+    unsigned int i = 0;
     for(auto e : edge_list)
       Rcpp::Rcout << "E[" << i++ << "]: " << e.first <<  " " << e.second << "\n";
     
@@ -129,7 +129,7 @@ public:
   }
   
   void print_adj_list() {
-    std::vector<std::vector<int> > adj = to_adj_list();
+    std::vector<std::vector<unsigned int> > adj = to_adj_list();
     
     for(size_t i=0; i!=adj.size(); ++i) {
       Rcpp::Rcout << "V[" << i << "]:";

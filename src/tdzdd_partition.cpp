@@ -319,16 +319,15 @@ public:
 //' @param adj_list Adjacency list
 //' @export
 // [[Rcpp::export]]
-Rcpp::List partition_alg(std::vector<std::vector<int>> adj_list,  
-                         std::vector<double> weights, 
-                         double min_w, double max_w, int n_part,
+Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list,  
+                         std::vector<weight_type> weights, 
+                         weight_type min_w, weight_type max_w, int n_part,
                          bool reduce = true)
   {
     
     graph g(adj_list, true); // Adjust to 0-based indexing
     frontier f(g);
     
-
     partition_zdd part(g, f, weights, min_w, max_w, n_part, false);
     
     tdzdd::DdStructure<2>* dd = new tdzdd::DdStructure<2>(part, true);
