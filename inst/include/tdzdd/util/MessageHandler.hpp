@@ -252,7 +252,7 @@ public:
 };
 
 template<std::ostream& os>
-bool MessageHandler_<os>::enabled = false;
+bool MessageHandler_<os>::enabled = true;
 
 template<std::ostream& os>
 int MessageHandler_<os>::indentLevel = 0;
