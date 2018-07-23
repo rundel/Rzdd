@@ -166,40 +166,17 @@ public:
     MessageHandler_& step(char dot = '-') {
         if (!enabled) return *this;
 
-        if (!stepping && dotTime + 4 < std::time(0)) {
-            *this << '\n';
-            stepping = true;
-        }
-
-        if (stepping) {
-            if (stepCount % 50 != column - indent) {
-                *this << '\n';
-                for (int i = stepCount % 50; i > 0; --i) {
-                    *this << '-';
-                }
-            }
-            *this << dot;
-            ++stepCount;
-            if (column - indent >= 50) {
-                ResourceUsage usage;
-                ResourceUsage diff = usage - prevUsage;
-                *this << std::setw(3) << std::right
-                        << (stepCount * 100 / totalSteps);
-                *this << "% (" << diff.elapsedTime() << ", " << diff.memory()
-                        << ")\n";
-                prevUsage = usage;
-            }
-        }
-        else {
-            ++stepCount;
-            while (dotCount * totalSteps < stepCount * 10) {
-                if (dotCount == 0) *this << ' ';
-                *this << '.';
-                ++dotCount;
-                dotTime = std::time(0);
-            }
-        }
-
+        ResourceUsage usage;
+        ResourceUsage diff = usage - prevUsage;
+        
+        *this << "Starting step " << stepCount << " of " << totalSteps;
+        *this << " (" << diff.elapsedTime() << ", " << diff.memory() << ")";
+        *this << "\n";
+        
+        prevUsage = usage;
+        
+        ++stepCount;
+        
         return *this;
     }
 
