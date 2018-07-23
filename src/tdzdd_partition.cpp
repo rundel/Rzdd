@@ -248,7 +248,7 @@ public:
       int_type u  = (j == 0) ? v : w;
       int_type Cu = (j == 0) ? Cv : Cw;
       
-      // Skip if u in F_{i+1}
+      // Skip if u in F_{i+1} => u is not leaving frontier
       if (f.contains(i+1, u))
         continue;
       
@@ -273,8 +273,9 @@ public:
         }
         s.fps = std::move(new_fps);
       }
+      
       if (!s.comp[Cu].remove(u))
-        throw std::runtime_error("Uh oh");
+        throw std::runtime_error("Failed to remove u, this should never happen.");
     }
     
     if (debug) {
@@ -283,7 +284,7 @@ public:
       Rcpp::Rcout << "fps : " << s.fps_to_string() << "\n";
     }
     
-    if (i == g.get_n_edges()-1) {
+    if (i == (int) g.get_n_edges()-1) {
       if (s.cc == n_part) {
         weight_type min_w = this->min_w;
         auto find_small = std::find_if(
@@ -329,6 +330,8 @@ Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list,
     graph g(adj_list, true); // Adjust to 0-based indexing
     frontier f(g);
     
+    
+    
     partition_zdd part(g, f, weights, min_w, max_w, n_part, false);
     
     tdzdd::DdStructure<2>* dd = new tdzdd::DdStructure<2>(part, true);
@@ -337,11 +340,16 @@ Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list,
 
     dd_ptr p(dd);
     
-    return Rcpp::List::create(
+    Rcpp::List res = Rcpp::List::create(
+      Rcpp::Named("type")  = "partition",
       Rcpp::Named("adj")   = adj_list,
       Rcpp::Named("edges") = g.to_dataframe(),
       Rcpp::Named("dd")    = p
     );
+    
+    res.attr("class") = "zdd";
+    
+    return res;
   }
 
 

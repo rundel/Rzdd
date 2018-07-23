@@ -50,17 +50,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// dd_n_edges
-double dd_n_edges(dd_ptr dd);
-RcppExport SEXP _Rzdd_dd_n_edges(SEXP ddSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
-    rcpp_result_gen = Rcpp::wrap(dd_n_edges(dd));
-    return rcpp_result_gen;
-END_RCPP
-}
 // dd_solutions
 std::vector<std::vector<int>> dd_solutions(dd_ptr dd, bool use_obi);
 RcppExport SEXP _Rzdd_dd_solutions(SEXP ddSEXP, SEXP use_obiSEXP) {
@@ -95,7 +84,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_to_sapporo", (DL_FUNC) &_Rzdd_dd_to_sapporo, 1},
     {"_Rzdd_dd_size", (DL_FUNC) &_Rzdd_dd_size, 1},
     {"_Rzdd_dd_cardinality", (DL_FUNC) &_Rzdd_dd_cardinality, 1},
-    {"_Rzdd_dd_n_edges", (DL_FUNC) &_Rzdd_dd_n_edges, 1},
     {"_Rzdd_dd_solutions", (DL_FUNC) &_Rzdd_dd_solutions, 2},
     {"_Rzdd_partition_alg", (DL_FUNC) &_Rzdd_partition_alg, 6},
     {NULL, NULL, 0}

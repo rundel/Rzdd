@@ -1,20 +1,31 @@
-n = 4
-n_part = 2
-r = raster::raster(nrows=n, ncols=n)
+library(magrittr)
+library(ggplot2)
+
+n=3
+r = raster::raster(nrows=n, ncols=n, xmn=0, xmx=n, ymn=0, ymx=n)
 p = sf::st_as_sf(raster::rasterToPolygons(r))
+p$layer = NULL
 
-adj = sf::st_relate(p, pattern = "F***1****")
+res = Rzdd::partition(p, 2)
 
+plot(res)
 
+res
 
-system.time({
-  res = Rzdd::partition_alg(
-    adj, rep(1L, length(adj)), 
-    min_w = floor( length(adj)/n_part ), 
-    max_w = ceiling( length(adj)/n_part ), 
-    n_part = n_part,
-    debug = FALSE
-  )
-}) 
+solutions = partition_labels(res)
 
-#DiagrammeR::grViz(res)
+stop()
+
+plots = purrr::map(
+  solutions,
+  function(solution) {
+    ggplot(p, aes(fill=as.factor(solution))) +
+      geom_sf() +
+      theme_void() +
+      guides(fill=FALSE)
+  }
+)
+
+#pdf("~/Desktop/test.pdf")
+cowplot::plot_grid(plotlist = plots, scale = 0.95)
+#dev.off()
