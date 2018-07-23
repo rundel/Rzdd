@@ -2,9 +2,9 @@
 % Please edit documentation in R/RcppExports.R
 \name{partition_alg}
 \alias{partition_alg}
-\title{zdd_partition}
+\title{partition_alg}
 \usage{
-partition_alg(adj_list, weights, min_w, max_w, n_part, debug = FALSE)
+partition_alg(adj_list, weights, min_w, max_w, n_part, reduce = TRUE)
 }
 \arguments{
 \item{adj_list}{Adjacency list}

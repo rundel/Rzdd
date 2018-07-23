@@ -21,13 +21,23 @@ dd_cardinality <- function(dd) {
     .Call(`_Rzdd_dd_cardinality`, dd)
 }
 
-#' zdd_partition
+#' @export
+dd_n_edges <- function(dd) {
+    .Call(`_Rzdd_dd_n_edges`, dd)
+}
+
+#' @export
+dd_solutions <- function(dd, use_obi = TRUE) {
+    .Call(`_Rzdd_dd_solutions`, dd, use_obi)
+}
+
+#' partition_alg
 #' 
 #' Blah blah blah
 #'
 #' @param adj_list Adjacency list
 #' @export
-partition_alg <- function(adj_list, weights, min_w, max_w, n_part, debug = FALSE) {
-    .Call(`_Rzdd_partition_alg`, adj_list, weights, min_w, max_w, n_part, debug)
+partition_alg <- function(adj_list, weights, min_w, max_w, n_part, reduce = TRUE) {
+    .Call(`_Rzdd_partition_alg`, adj_list, weights, min_w, max_w, n_part, reduce)
 }
 

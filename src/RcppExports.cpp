@@ -7,62 +7,85 @@
 using namespace Rcpp;
 
 // dd_to_dot
-std::string dd_to_dot(Rcpp::XPtr< tdzdd::DdStructure<2> > dd);
+std::string dd_to_dot(dd_ptr dd);
 RcppExport SEXP _Rzdd_dd_to_dot(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr< tdzdd::DdStructure<2> > >::type dd(ddSEXP);
+    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
     rcpp_result_gen = Rcpp::wrap(dd_to_dot(dd));
     return rcpp_result_gen;
 END_RCPP
 }
 // dd_to_sapporo
-std::string dd_to_sapporo(Rcpp::XPtr< tdzdd::DdStructure<2> > dd);
+std::string dd_to_sapporo(dd_ptr dd);
 RcppExport SEXP _Rzdd_dd_to_sapporo(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr< tdzdd::DdStructure<2> > >::type dd(ddSEXP);
+    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
     rcpp_result_gen = Rcpp::wrap(dd_to_sapporo(dd));
     return rcpp_result_gen;
 END_RCPP
 }
 // dd_size
-int dd_size(Rcpp::XPtr< tdzdd::DdStructure<2> > dd);
+int dd_size(dd_ptr dd);
 RcppExport SEXP _Rzdd_dd_size(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr< tdzdd::DdStructure<2> > >::type dd(ddSEXP);
+    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
     rcpp_result_gen = Rcpp::wrap(dd_size(dd));
     return rcpp_result_gen;
 END_RCPP
 }
 // dd_cardinality
-double dd_cardinality(Rcpp::XPtr< tdzdd::DdStructure<2> > dd);
+double dd_cardinality(dd_ptr dd);
 RcppExport SEXP _Rzdd_dd_cardinality(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr< tdzdd::DdStructure<2> > >::type dd(ddSEXP);
+    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
     rcpp_result_gen = Rcpp::wrap(dd_cardinality(dd));
     return rcpp_result_gen;
 END_RCPP
 }
-// partition_alg
-SEXP partition_alg(std::vector<std::vector<int> > adj_list, std::vector<double> weights, double min_w, double max_w, int n_part, bool debug);
-RcppExport SEXP _Rzdd_partition_alg(SEXP adj_listSEXP, SEXP weightsSEXP, SEXP min_wSEXP, SEXP max_wSEXP, SEXP n_partSEXP, SEXP debugSEXP) {
+// dd_n_edges
+double dd_n_edges(dd_ptr dd);
+RcppExport SEXP _Rzdd_dd_n_edges(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<std::vector<int> > >::type adj_list(adj_listSEXP);
+    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
+    rcpp_result_gen = Rcpp::wrap(dd_n_edges(dd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dd_solutions
+std::vector<std::vector<int>> dd_solutions(dd_ptr dd, bool use_obi);
+RcppExport SEXP _Rzdd_dd_solutions(SEXP ddSEXP, SEXP use_obiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< dd_ptr >::type dd(ddSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_obi(use_obiSEXP);
+    rcpp_result_gen = Rcpp::wrap(dd_solutions(dd, use_obi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// partition_alg
+Rcpp::List partition_alg(std::vector<std::vector<int>> adj_list, std::vector<double> weights, double min_w, double max_w, int n_part, bool reduce);
+RcppExport SEXP _Rzdd_partition_alg(SEXP adj_listSEXP, SEXP weightsSEXP, SEXP min_wSEXP, SEXP max_wSEXP, SEXP n_partSEXP, SEXP reduceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<int>> >::type adj_list(adj_listSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< double >::type min_w(min_wSEXP);
     Rcpp::traits::input_parameter< double >::type max_w(max_wSEXP);
     Rcpp::traits::input_parameter< int >::type n_part(n_partSEXP);
-    Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(partition_alg(adj_list, weights, min_w, max_w, n_part, debug));
+    Rcpp::traits::input_parameter< bool >::type reduce(reduceSEXP);
+    rcpp_result_gen = Rcpp::wrap(partition_alg(adj_list, weights, min_w, max_w, n_part, reduce));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -72,6 +95,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_to_sapporo", (DL_FUNC) &_Rzdd_dd_to_sapporo, 1},
     {"_Rzdd_dd_size", (DL_FUNC) &_Rzdd_dd_size, 1},
     {"_Rzdd_dd_cardinality", (DL_FUNC) &_Rzdd_dd_cardinality, 1},
+    {"_Rzdd_dd_n_edges", (DL_FUNC) &_Rzdd_dd_n_edges, 1},
+    {"_Rzdd_dd_solutions", (DL_FUNC) &_Rzdd_dd_solutions, 2},
     {"_Rzdd_partition_alg", (DL_FUNC) &_Rzdd_partition_alg, 6},
     {NULL, NULL, 0}
 };
