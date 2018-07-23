@@ -1,5 +1,7 @@
 #include <Rcpp.h>
 
+#include "Rzdd.h"
+
 #include "graph.hpp"
 #include "frontier.hpp"
 #include "util.hpp"
@@ -310,24 +312,20 @@ public:
   }
 };
 
-//' zdd_partition
+//' partition_alg
 //' 
 //' Blah blah blah
 //'
 //' @param adj_list Adjacency list
 //' @export
-
 // [[Rcpp::export]]
-Rcpp::XPtr<tdzdd::DdStructure<2>>
-  partition_alg(std::vector<std::vector<int> > adj_list,  
-                std::vector<double> weights, 
-                double min_w, double max_w, int n_part,
-                bool reduce = true)
+Rcpp::List partition_alg(std::vector<std::vector<int>> adj_list,  
+                         std::vector<double> weights, 
+                         double min_w, double max_w, int n_part,
+                         bool reduce = true)
   {
-    // Use 0-based indexing
-    adj_list = to_0_indexing(adj_list);
     
-    graph g(adj_list);
+    graph g(adj_list, true); // Adjust to 0-based indexing
     frontier f(g);
     
 
@@ -337,8 +335,13 @@ Rcpp::XPtr<tdzdd::DdStructure<2>>
     if (reduce)
       dd->zddReduce();
 
-    Rcpp::XPtr< tdzdd::DdStructure<2> > res(dd);
-    return res;
+    dd_ptr p(dd);
+    
+    return Rcpp::List::create(
+      Rcpp::Named("adj")   = adj_list,
+      Rcpp::Named("edges") = g.to_dataframe(),
+      Rcpp::Named("dd")    = p
+    );
   }
 
 

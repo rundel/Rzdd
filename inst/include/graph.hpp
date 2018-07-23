@@ -13,7 +13,7 @@ private:
 
 public:
 
-    void check_edge_list() {
+  void check_edge_list() {
     for(auto& e : edge_list) {
       if (e.first > e.second)
         std::swap(e.first, e.second);
@@ -43,20 +43,22 @@ public:
     check_edge_list();
   }
   
-  graph(std::vector<std::vector<int> > const& adj_list) {
-    n_vertices = 0;
-    int max_vertex = 0;
+  graph(std::vector<std::vector<int> > const& adj_list, bool from_obi = true) {
+    int v_max = 0;
     
     
     for(size_t i=0; i < adj_list.size(); i++) {
       for(size_t j=0; j < adj_list[i].size(); j++) {
-        edge_list.push_back({i, adj_list[i][j]});  
+        int v_from = (int) i;
+        int v_to = adj_list[i][j] - (from_obi ? 1 : 0);
         
-        max_vertex = std::max(max_vertex, adj_list[i][j]);
+        edge_list.push_back({v_from, v_to});  
+        
+        v_max = std::max(v_max, v_to);
       }
     }
     
-    n_vertices = std::max(max_vertex, (int)adj_list.size());  
+    n_vertices = std::max(v_max, (int) adj_list.size());  
     check_edge_list();
   }
   
@@ -100,6 +102,22 @@ public:
     }
     
     return adj_list;
+  }
+  
+  Rcpp::DataFrame to_dataframe(bool return_obi = true) {
+    std::vector<int> edge, v_from, v_to;
+    
+    for(size_t i=0; i!=edge_list.size(); ++i) {
+      edge.push_back(   i                   + (return_obi ? 1 : 0) );
+      v_from.push_back( edge_list[i].first  + (return_obi ? 1 : 0) );
+      v_to.push_back(   edge_list[i].second + (return_obi ? 1 : 0) );
+    }
+    
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("edge") = edge,
+      Rcpp::Named("from") = v_from,
+      Rcpp::Named("to") = v_to
+    );
   }
   
   void print_edge_list() {
