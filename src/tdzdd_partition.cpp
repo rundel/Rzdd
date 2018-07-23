@@ -15,7 +15,7 @@ typedef uint8_t int_type;
 
 struct component {
   std::vector<int_type> current;
-  double weight;
+  weight_type weight;
   
   component(int_type v, weight_type w) 
     : current({v}),
@@ -80,14 +80,15 @@ struct state {
   std::vector<component> comp; // Vertex components
   std::vector<std::pair<int_type,int_type>> fps;  // Forbidden pairs
   int_type cc; // Component count
-  weight_type minw;
-  weight_type maxw;
+  //weight_type minw;
+  //weight_type maxw;
   
   state() 
-    : cc(0),
-      minw(0),
-      maxw(std::numeric_limits<weight_type>::infinity())
-  { }
+    : cc(0)
+  { 
+    //minw = std::numeric_limits<weight_type>::infinity();
+    //maxw = 0;
+  }
   
   int_type find_component(int_type vertex) const {
     for(size_t i=0; i != comp.size(); ++i) {
@@ -168,7 +169,7 @@ public:
     return n;
   }
   
-  int getChild(State& s, int level, int x) const {
+  int getChild(State& s, int level, int arc) const {
     
     int i = n - level;
   
@@ -177,7 +178,7 @@ public:
     int_type v = e.first;
     int_type w = e.second;
     
-    if (x != 0 && x != 1)
+    if (arc != 0 && arc != 1)
       throw std::runtime_error("Invalid value for x.");
     
     for(int_type u : {v, w}) {
@@ -187,7 +188,7 @@ public:
     }
     
     if (debug) {
-      Rcpp::Rcout << "\ni = " << i << "; x = " << x << "\n";
+      Rcpp::Rcout << "\ni = " << i << "; arc = " << arc << "\n";
     }
     
     
@@ -201,7 +202,7 @@ public:
     
     auto fps_find = std::find(s.fps.begin(), s.fps.end(), std::make_pair(Cv, Cw));
     
-    if (x == 0) {
+    if (arc == 0) {
       if (Cv == Cw) {
         if (debug) Rcpp::Rcout << "Rejected: Components already connected\n";
         return 0;
@@ -209,7 +210,7 @@ public:
         if (fps_find == s.fps.end())
           s.fps.push_back({Cv,Cw});
       }
-    } else if (x == 1 && Cv != Cw) {
+    } else if (arc == 1 && Cv != Cw) {
       if (Cv != Cw && fps_find != s.fps.end()) {
         if (debug) Rcpp::Rcout << "Rejected: Components in fps\n";
         return 0;
@@ -291,11 +292,12 @@ public:
           [min_w](component const& c) -> bool {return c.weight < min_w;}
         );
         
-        if (find_small == s.comp.end())
-        {
+        if (find_small == s.comp.end()) {
           if (debug) Rcpp::Rcout << "Accepted\n";
           return -1;
         }
+        
+        throw std::runtime_error("This should never happen - component too small?");
       }
       
       if (debug) Rcpp::Rcout << "Rejected: Not enough components\n";
