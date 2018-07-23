@@ -74,15 +74,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // partition_alg
-Rcpp::List partition_alg(std::vector<std::vector<int>> adj_list, std::vector<double> weights, double min_w, double max_w, int n_part, bool reduce);
+Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list, std::vector<weight_type> weights, weight_type min_w, weight_type max_w, int n_part, bool reduce);
 RcppExport SEXP _Rzdd_partition_alg(SEXP adj_listSEXP, SEXP weightsSEXP, SEXP min_wSEXP, SEXP max_wSEXP, SEXP n_partSEXP, SEXP reduceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<std::vector<int>> >::type adj_list(adj_listSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type weights(weightsSEXP);
-    Rcpp::traits::input_parameter< double >::type min_w(min_wSEXP);
-    Rcpp::traits::input_parameter< double >::type max_w(max_wSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj_list(adj_listSEXP);
+    Rcpp::traits::input_parameter< std::vector<weight_type> >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< weight_type >::type min_w(min_wSEXP);
+    Rcpp::traits::input_parameter< weight_type >::type max_w(max_wSEXP);
     Rcpp::traits::input_parameter< int >::type n_part(n_partSEXP);
     Rcpp::traits::input_parameter< bool >::type reduce(reduceSEXP);
     rcpp_result_gen = Rcpp::wrap(partition_alg(adj_list, weights, min_w, max_w, n_part, reduce));

@@ -11,11 +11,13 @@
 
 #include <boost/functional/hash.hpp>
 
+typedef uint8_t int_type;
+
 struct component {
-  std::vector<int> current;
+  std::vector<int_type> current;
   double weight;
   
-  component(int v, double w) 
+  component(int_type v, weight_type w) 
     : current({v}),
       weight(w)
   { }
@@ -23,7 +25,7 @@ struct component {
   void comp_union(component const& c) {
     weight += c.weight;
     
-    std::vector<int> tmp;
+    std::vector<int_type> tmp;
     
     std::set_union(current.begin(), current.end(),
                    c.current.begin(), c.current.end(),
@@ -33,7 +35,7 @@ struct component {
   }
   
   
-  bool remove(int v) {
+  bool remove(int_type v) {
     auto it = std::find(current.begin(), current.end(), v);
     
     if (it != current.end()) {
@@ -44,7 +46,7 @@ struct component {
     return false;
   }
   
-  bool has_element(int v) const {
+  bool has_element(int_type v) const {
     auto const it = std::find(current.begin(), current.end(), v);
     
     return (it != current.end());
@@ -73,27 +75,28 @@ struct component {
   }
 };
 
+
 struct state {
   std::vector<component> comp; // Vertex components
-  std::vector<std::pair<int,int>> fps;  // Forbidden pairs
-  int cc; // Component count
-  double minw;
-  double maxw;
+  std::vector<std::pair<int_type,int_type>> fps;  // Forbidden pairs
+  int_type cc; // Component count
+  weight_type minw;
+  weight_type maxw;
   
   state() 
     : cc(0),
       minw(0),
-      maxw(std::numeric_limits<double>::infinity())
+      maxw(std::numeric_limits<weight_type>::infinity())
   { }
   
-  int find_component(int vertex) const {
+  int_type find_component(int_type vertex) const {
     for(size_t i=0; i != comp.size(); ++i) {
       if (comp[i].has_element(vertex))
         return i;
     }
     
     throw std::runtime_error("Could not find vertex " + std::to_string(vertex));
-    return -1;
+    return 0;
   }
   
   std::string comp_to_string() const {
@@ -127,25 +130,26 @@ struct state {
 };
 
 
+
+
 struct partition_zdd : public tdzdd::DdSpec<partition_zdd,state,2> {
   
 public:
   graph const& g;
   frontier const& f;
-  std::vector<double> const& w;
-  double min_w;
-  double max_w;
+  std::vector<weight_type> const& w;
+  weight_type min_w;
+  weight_type max_w;
   int n_part;
-  int n;
+  int const n;
   bool debug;
-  int cur_edge;
   
 public:
   partition_zdd(graph const& g, 
                 frontier const& f,
-                std::vector<double> const& w,
-                double min_w,
-                double max_w,
+                std::vector<weight_type> const& w,
+                weight_type min_w,
+                weight_type max_w,
                 int n_part, 
                 bool debug)
     : g(g),
@@ -155,8 +159,7 @@ public:
       max_w(max_w),
       n_part(n_part),
       n(g.get_n_edges()),
-      debug(debug),
-      cur_edge(0)
+      debug(debug)
   { }
   
   int getRoot(State& s) const {
@@ -168,20 +171,16 @@ public:
   int getChild(State& s, int level, int x) const {
     
     int i = n - level;
-    //if (i > cur_edge) {
-    //  cur_edge = i;
-    //  Rcpp::Rcout << "Working on edge " << i << " / " << n << "\n";
-    //}
-    
+  
     edge e = g.get_edge(i);
     
-    int v = e.first;
-    int w = e.second;
+    int_type v = e.first;
+    int_type w = e.second;
     
     if (x != 0 && x != 1)
       throw std::runtime_error("Invalid value for x.");
     
-    for(int u : {v, w}) {
+    for(int_type u : {v, w}) {
       if (!f.contains(i, u)) { // If u not in the frontier add it as a singleton component
         s.comp.push_back( component(u, this->w[u]) );
       }
@@ -192,8 +191,8 @@ public:
     }
     
     
-    int Cv = s.find_component(v);
-    int Cw = s.find_component(w);
+    int_type Cv = s.find_component(v);
+    int_type Cw = s.find_component(w);
     
     if  (Cv > Cw) { // Ensure that Cv <= Cw
       std::swap(Cv,Cw);
@@ -245,8 +244,8 @@ public:
     }
     
     for(size_t j : {0, 1}) {
-      int u  = (j == 0) ? v : w;
-      int Cu = (j == 0) ? Cv : Cw;
+      int_type u  = (j == 0) ? v : w;
+      int_type Cu = (j == 0) ? Cv : Cw;
       
       // Skip if u in F_{i+1}
       if (f.contains(i+1, u))
@@ -265,7 +264,7 @@ public:
           return 0;
         }
         
-        std::vector<std::pair<int,int>> new_fps;
+        std::vector<std::pair<int_type,int_type>> new_fps;
         for(auto p : s.fps) {
           if (p.first != Cu && p.second != Cu) {
             new_fps.push_back(p);
@@ -285,7 +284,7 @@ public:
     
     if (i == g.get_n_edges()-1) {
       if (s.cc == n_part) {
-        double min_w = this->min_w;
+        weight_type min_w = this->min_w;
         auto find_small = std::find_if(
           s.comp.begin(),  
           s.comp.end(),

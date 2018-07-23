@@ -27,7 +27,4 @@ std::vector<std::vector<int> > to_1_indexing(std::vector<std::vector<int> > adj)
   return adj;
 }
 
-
-
-
 #endif
