@@ -26,7 +26,7 @@ partition.sf = function(sf_obj, n=2,
   
   adj = sf::st_relate(sf_obj, pattern = pattern)
   
-  zdd = partition_alg(adj, weights, min_w, max_w, n_part, reduce = TRUE)
+  zdd = partition_alg(adj, weights, min_w, max_w, n_part=n, reduce = TRUE)
 }
 
 
