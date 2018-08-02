@@ -78,6 +78,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_graph
+void test_graph(std::vector<std::vector<unsigned int>> adj_list);
+RcppExport SEXP _Rzdd_test_graph(SEXP adj_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj_list(adj_listSEXP);
+    test_graph(adj_list);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_to_dot", (DL_FUNC) &_Rzdd_dd_to_dot, 1},
@@ -86,6 +96,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_cardinality", (DL_FUNC) &_Rzdd_dd_cardinality, 1},
     {"_Rzdd_dd_solutions", (DL_FUNC) &_Rzdd_dd_solutions, 2},
     {"_Rzdd_partition_alg", (DL_FUNC) &_Rzdd_partition_alg, 6},
+    {"_Rzdd_test_graph", (DL_FUNC) &_Rzdd_test_graph, 1},
     {NULL, NULL, 0}
 };
 

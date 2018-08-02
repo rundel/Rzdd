@@ -31,3 +31,9 @@ partition_alg <- function(adj_list, weights, min_w, max_w, n_part, reduce = TRUE
     .Call(`_Rzdd_partition_alg`, adj_list, weights, min_w, max_w, n_part, reduce)
 }
 
+#' @param adj_list Adjacency list
+#' @export
+test_graph <- function(adj_list) {
+    invisible(.Call(`_Rzdd_test_graph`, adj_list))
+}
+

@@ -6,5 +6,5 @@
 \alias{Rzdd-package}
 \title{Rzdd:}
 \description{
-Rzdd:
+One paragraph description of what the package does as one or more full sentences.
 }
