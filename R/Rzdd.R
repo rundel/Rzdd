@@ -1,5 +1,5 @@
 #' Rzdd:
 #'
-#' @import Rcpp
+#' @import Rcpp igraph
 #' @useDynLib Rzdd, .registration = TRUE
 "_PACKAGE"
