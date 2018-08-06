@@ -172,7 +172,7 @@ public:
   int getChild(State& s, int level, int arc) const {
     
     int i = n - level;
-  
+    
     edge e = g.get_edge(i);
     
     int_type v = e.first;
@@ -325,31 +325,31 @@ Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list,
                          std::vector<weight_type> weights, 
                          weight_type min_w, weight_type max_w, int n_part,
                          bool reduce = true)
-  {
-    
-    graph g(adj_list, true); // Adjust to 0-based indexing
-    frontier f(g);
-    
-    
-    
-    partition_zdd part(g, f, weights, min_w, max_w, n_part, false);
-    
-    tdzdd::DdStructure<2>* dd = new tdzdd::DdStructure<2>(part, true);
-    if (reduce)
-      dd->zddReduce();
-
-    dd_ptr p(dd);
-    
-    Rcpp::List res = Rcpp::List::create(
-      Rcpp::Named("type")  = "partition",
-      Rcpp::Named("adj")   = adj_list,
-      Rcpp::Named("edges") = g.to_dataframe(),
-      Rcpp::Named("dd")    = p
-    );
-    
-    res.attr("class") = "zdd";
-    
-    return res;
-  }
+{
+  
+  graph g(adj_list, true); // Adjust to 0-based indexing
+  frontier f(g);
+  
+  
+  
+  partition_zdd part(g, f, weights, min_w, max_w, n_part, false);
+  
+  tdzdd::DdStructure<2>* dd = new tdzdd::DdStructure<2>(part, true);
+  if (reduce)
+    dd->zddReduce();
+  
+  dd_ptr p(dd);
+  
+  Rcpp::List res = Rcpp::List::create(
+    Rcpp::Named("type")  = "partition",
+    Rcpp::Named("adj")   = adj_list,
+    Rcpp::Named("edges") = g.to_dataframe(),
+    Rcpp::Named("dd")    = p
+  );
+  
+  res.attr("class") = "zdd";
+  
+  return res;
+}
 
 
