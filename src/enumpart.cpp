@@ -92,10 +92,8 @@ Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part 
                          bool lookahead = true, bool noloop = false,
                          bool verbose = true, bool use_openmp = true)
 {
-    if (verbose) {
-        MessageHandler::showMessages();
-    }
     
+    tdzdd::MessageHandler::showMessages(verbose);
     tdzdd::MessageHandler mh;
     mh.begin("started\n");
 

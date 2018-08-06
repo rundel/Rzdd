@@ -6,9 +6,7 @@ r = raster::raster(nrows=n, ncols=n, xmn=0, xmx=n, ymn=0, ymx=n)
 p = sf::st_as_sf(raster::rasterToPolygons(r))
 p$layer = NULL
 
-#res = Rzdd::partition(p, 2)
-#res = Rzdd::enum_part(p, lower=floor(n^2/2), upper=ceiling(n^2/2))
-res = Rzdd::enum_part(p, ratio=1)
+res = Rzdd::enum_part(p, ratio=1, verbose=TRUE)
 
 res
 

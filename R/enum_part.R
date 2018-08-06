@@ -18,9 +18,9 @@ enum_part.sf = function(sf, ...) {
 #' @export
 enum_part.list = function(adj, n_part = 2, weights = rep(1, length(adj)),
                           ratio = NULL, lower = NULL, upper = NULL,
-                          use_openmp = TRUE)
+                          use_openmp = TRUE, verbose=TRUE)
 {
-  zdd = enum_part_alg(adj, n_part=n_part, use_openmp=TRUE)
+  zdd = enum_part_alg(adj, n_part=n_part, use_openmp=use_openmp, verbose=verbose)
   
   if (!is.null(ratio)) {
     zdd = ratio_constrain(zdd, weights, ratio)
