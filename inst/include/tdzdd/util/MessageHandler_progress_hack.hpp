@@ -53,20 +53,20 @@ template<std::ostream& os>
 class MessageHandler_: public std::ostream {
     class Buf: public std::streambuf {
         MessageHandler_& mh;
-        
+
     public:
         Buf(MessageHandler_& mh)
-            : mh(mh) {
+                : mh(mh) {
         }
-        
+
     protected:
         virtual void imbue(std::locale const& loc) {
             os.imbue(loc);
         }
-        
+
         virtual int overflow(int c) {
             if (!enabled) return c;
-            
+
             if (lastUser != this) {
                 if (column != 0) {
                     os.put('\n');
@@ -75,9 +75,9 @@ class MessageHandler_: public std::ostream {
                 }
                 lastUser = this;
             }
-            
+
             if (c == EOF) return EOF;
-            
+
             if (column == 0) {
                 if (isspace(c)) return c;
                 for (int i = mh.indent; i > 0; --i) {
@@ -85,9 +85,9 @@ class MessageHandler_: public std::ostream {
                     ++column;
                 }
             }
-            
+
             os.put(c);
-            
+
             if (c == '\n') {
                 ++lineno;
                 column = 0;
@@ -95,18 +95,18 @@ class MessageHandler_: public std::ostream {
             else {
                 ++column;
             }
-            
+
             return c;
         }
     };
-    
+
     static int const INDENT_SIZE = 2;
     static bool enabled;
     static int indentLevel;
     static int lineno;
     static int column;
     static Buf* lastUser;
-    
+
     Buf buf;
     std::string name;
     int indent;
@@ -118,31 +118,31 @@ class MessageHandler_: public std::ostream {
     int dotCount;
     time_t dotTime;
     bool stepping;
-    
+
 public:
     MessageHandler_()
-        : std::ostream(&buf), buf(*this), indent(indentLevel * INDENT_SIZE),
-          beginLine(0), totalSteps(0), stepCount(0),
-          dotCount(0), dotTime(0), stepping(false) {
-              flags(os.flags());
-              precision(os.precision());
-              width(os.width());
-          }
-    
+            : std::ostream(&buf), buf(*this), indent(indentLevel * INDENT_SIZE),
+              beginLine(0), totalSteps(0), stepCount(0),
+              dotCount(0), dotTime(0), stepping(false) {
+        flags(os.flags());
+        precision(os.precision());
+        width(os.width());
+    }
+
     virtual ~MessageHandler_() {
         if (!name.empty()) end("aborted");
     }
-    
+
     static bool showMessages(bool flag = true) {
         bool prev = enabled;
         enabled = flag;
         return prev;
     }
-    
+
     MessageHandler_& begin(std::string const& s) {
         if (!enabled) return *this;
         if (!name.empty()) end("aborted");
-        name = s.empty() ? "level-" + indentLevel : s;
+        name = s.empty() ? "level-" + std::to_string(indentLevel) : s;
         indent = indentLevel * INDENT_SIZE;
         *this << "\n" << capitalize(name);
         indent = ++indentLevel * INDENT_SIZE;
@@ -152,7 +152,7 @@ public:
         setSteps(10);
         return *this;
     }
-    
+
     MessageHandler_& setSteps(int steps) {
         if (!enabled) return *this;
         totalSteps = steps;
@@ -162,54 +162,31 @@ public:
         stepping = false;
         return *this;
     }
-    
+
     MessageHandler_& step(char dot = '-') {
         if (!enabled) return *this;
+
+        ResourceUsage usage;
+        ResourceUsage diff = usage - prevUsage;
         
-        if (!stepping && dotTime + 4 < std::time(0)) {
-            *this << '\n';
-            stepping = true;
-        }
+        *this << "Starting step " << stepCount << " of " << totalSteps;
+        *this << " (" << diff.elapsedTime() << ", " << diff.memory() << ")";
+        *this << "\n";
         
-        if (stepping) {
-            if (stepCount % 50 != column - indent) {
-                *this << '\n';
-                for (int i = stepCount % 50; i > 0; --i) {
-                    *this << '-';
-                }
-            }
-            *this << dot;
-            ++stepCount;
-            if (column - indent >= 50) {
-                ResourceUsage usage;
-                ResourceUsage diff = usage - prevUsage;
-                *this << std::setw(3) << std::right
-                      << (stepCount * 100 / totalSteps);
-                *this << "% (" << diff.elapsedTime() << ", " << diff.memory()
-                      << ")\n";
-                prevUsage = usage;
-            }
-        }
-        else {
-            ++stepCount;
-            while (dotCount * totalSteps < stepCount * 10) {
-                if (dotCount == 0) *this << ' ';
-                *this << '.';
-                ++dotCount;
-                dotTime = std::time(0);
-            }
-        }
+        prevUsage = usage;
+        
+        ++stepCount;
         
         return *this;
     }
-    
+
     MessageHandler_& end(std::string const& msg = "", std::string const& info =
-        "") {
+            "") {
         if (!enabled) return *this;
         if (name.empty()) return *this;
-        
+
         ResourceUsage rusage = ResourceUsage() - initialUsage;
-        
+
         if (beginLine == lineno) {
             if (!info.empty()) {
                 *this << " " << info;
@@ -221,12 +198,12 @@ public:
                 *this << " " << msg;
             }
             *this << " in " << rusage << ".\n";
-            
+
             indent = --indentLevel * INDENT_SIZE;
         }
         else {
             indent = --indentLevel * INDENT_SIZE;
-            
+
             if (msg.empty()) {
                 *this << "\nDone " << name;
             }
@@ -236,23 +213,23 @@ public:
             if (!info.empty()) *this << " " << info;
             *this << " in " << rusage << ".\n";
         }
-        
+
         name = "";
         return *this;
     }
-    
+
     MessageHandler_& end(size_t n) {
         if (!enabled) return *this;
         return end("", "<" + to_string(n) + ">");
     }
-    
+
     int col() const {
         return column;
     }
 };
 
 template<std::ostream& os>
-bool MessageHandler_<os>::enabled = false;
+bool MessageHandler_<os>::enabled = true;
 
 template<std::ostream& os>
 int MessageHandler_<os>::indentLevel = 0;
