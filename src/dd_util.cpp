@@ -2,20 +2,35 @@
 #include "Rzdd.h"
 #include "tdzdd/DdStructure.hpp"
 
+#include <boost/range/adaptor/reversed.hpp>
 
-// [[Rcpp::export]]
-std::string dd_to_dot(dd_ptr dd) {
-  std::stringstream ss;
-  dd->dumpDot(ss, "dd"); 
-  return ss.str();
+std::vector<std::string> get_lines(std::stringstream& ss, char delim = '\n') {
+  std::vector<std::string> lines;
+  
+  std::string token;
+  while (std::getline(ss, token, delim)) {
+    lines.push_back(token);
+  }
+  
+  return lines;
 }
 
 
 // [[Rcpp::export]]
-std::string dd_to_sapporo(dd_ptr dd) {
+std::vector<std::string> dd_to_dot(dd_ptr dd) {
+  std::stringstream ss;
+  dd->dumpDot(ss, "dd");
+  
+  return get_lines(ss);
+}
+
+
+// [[Rcpp::export]]
+std::vector<std::string> dd_to_sapporo(dd_ptr dd) {
   std::stringstream ss;
   dd->dumpSapporo(ss); 
-  return ss.str();
+  
+  return get_lines(ss);
 }
 
 
@@ -38,7 +53,7 @@ std::vector<std::vector<int>> dd_solutions(dd_ptr dd, bool use_obi = true) {
   
   for (auto t = dd->begin(); t != dd->end(); ++t) {
     std::vector<int> levels;
-    for(int v: *t) {
+    for(int v: boost::adaptors::reverse(*t)) {
       levels.push_back(n - v + (use_obi ? 1 : 0));
     }
     

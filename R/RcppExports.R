@@ -21,6 +21,22 @@ dd_solutions <- function(dd, use_obi = TRUE) {
     .Call(`_Rzdd_dd_solutions`, dd, use_obi)
 }
 
+enum_part_alg <- function(adj, n_part = 2L, lookahead = TRUE, noloop = FALSE, verbose = TRUE, use_openmp = TRUE) {
+    .Call(`_Rzdd_enum_part_alg`, adj, n_part, lookahead, noloop, verbose, use_openmp)
+}
+
+ratio_constrain <- function(zdd, weights, ratio) {
+    .Call(`_Rzdd_ratio_constrain`, zdd, weights, ratio)
+}
+
+min_max_constrain <- function(zdd, weights, lower, upper) {
+    .Call(`_Rzdd_min_max_constrain`, zdd, weights, lower, upper)
+}
+
+compute_frontier <- function(adj_list) {
+    .Call(`_Rzdd_compute_frontier`, adj_list)
+}
+
 #' partition_alg
 #' 
 #' Blah blah blah

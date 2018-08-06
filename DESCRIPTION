@@ -9,5 +9,6 @@ Description: One paragraph description of what the package does as one or more f
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.17), igraph
 LinkingTo: Rcpp, BH
+Suggests: sf
 SystemRequirements: C++11
 RoxygenNote: 6.1.0

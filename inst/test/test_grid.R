@@ -1,7 +1,7 @@
 library(magrittr)
 library(ggplot2)
 
-n=3
+n=5
 r = raster::raster(nrows=n, ncols=n, xmn=0, xmx=n, ymn=0, ymx=n)
 p = sf::st_as_sf(raster::rasterToPolygons(r))
 p$layer = NULL
@@ -14,7 +14,7 @@ res
 
 solutions = partition_labels(res)
 
-stop()
+
 
 plots = purrr::map(
   solutions,

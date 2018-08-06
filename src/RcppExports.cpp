@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // dd_to_dot
-std::string dd_to_dot(dd_ptr dd);
+std::vector<std::string> dd_to_dot(dd_ptr dd);
 RcppExport SEXP _Rzdd_dd_to_dot(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -18,7 +18,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // dd_to_sapporo
-std::string dd_to_sapporo(dd_ptr dd);
+std::vector<std::string> dd_to_sapporo(dd_ptr dd);
 RcppExport SEXP _Rzdd_dd_to_sapporo(SEXP ddSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -62,6 +62,60 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// enum_part_alg
+Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part, bool lookahead, bool noloop, bool verbose, bool use_openmp);
+RcppExport SEXP _Rzdd_enum_part_alg(SEXP adjSEXP, SEXP n_partSEXP, SEXP lookaheadSEXP, SEXP noloopSEXP, SEXP verboseSEXP, SEXP use_openmpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj(adjSEXP);
+    Rcpp::traits::input_parameter< int >::type n_part(n_partSEXP);
+    Rcpp::traits::input_parameter< bool >::type lookahead(lookaheadSEXP);
+    Rcpp::traits::input_parameter< bool >::type noloop(noloopSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_openmp(use_openmpSEXP);
+    rcpp_result_gen = Rcpp::wrap(enum_part_alg(adj, n_part, lookahead, noloop, verbose, use_openmp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ratio_constrain
+Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, double ratio);
+RcppExport SEXP _Rzdd_ratio_constrain(SEXP zddSEXP, SEXP weightsSEXP, SEXP ratioSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type zdd(zddSEXP);
+    Rcpp::traits::input_parameter< std::vector<unsigned int> >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< double >::type ratio(ratioSEXP);
+    rcpp_result_gen = Rcpp::wrap(ratio_constrain(zdd, weights, ratio));
+    return rcpp_result_gen;
+END_RCPP
+}
+// min_max_constrain
+Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, unsigned int lower, unsigned int upper);
+RcppExport SEXP _Rzdd_min_max_constrain(SEXP zddSEXP, SEXP weightsSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type zdd(zddSEXP);
+    Rcpp::traits::input_parameter< std::vector<unsigned int> >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type upper(upperSEXP);
+    rcpp_result_gen = Rcpp::wrap(min_max_constrain(zdd, weights, lower, upper));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_frontier
+std::vector<std::vector<int>> compute_frontier(std::vector<std::vector<unsigned int>> adj_list);
+RcppExport SEXP _Rzdd_compute_frontier(SEXP adj_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj_list(adj_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_frontier(adj_list));
+    return rcpp_result_gen;
+END_RCPP
+}
 // partition_alg
 Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list, std::vector<weight_type> weights, weight_type min_w, weight_type max_w, int n_part, bool reduce);
 RcppExport SEXP _Rzdd_partition_alg(SEXP adj_listSEXP, SEXP weightsSEXP, SEXP min_wSEXP, SEXP max_wSEXP, SEXP n_partSEXP, SEXP reduceSEXP) {
@@ -95,6 +149,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_size", (DL_FUNC) &_Rzdd_dd_size, 1},
     {"_Rzdd_dd_cardinality", (DL_FUNC) &_Rzdd_dd_cardinality, 1},
     {"_Rzdd_dd_solutions", (DL_FUNC) &_Rzdd_dd_solutions, 2},
+    {"_Rzdd_enum_part_alg", (DL_FUNC) &_Rzdd_enum_part_alg, 6},
+    {"_Rzdd_ratio_constrain", (DL_FUNC) &_Rzdd_ratio_constrain, 3},
+    {"_Rzdd_min_max_constrain", (DL_FUNC) &_Rzdd_min_max_constrain, 4},
+    {"_Rzdd_compute_frontier", (DL_FUNC) &_Rzdd_compute_frontier, 1},
     {"_Rzdd_partition_alg", (DL_FUNC) &_Rzdd_partition_alg, 6},
     {"_Rzdd_test_graph", (DL_FUNC) &_Rzdd_test_graph, 1},
     {NULL, NULL, 0}
