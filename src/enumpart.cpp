@@ -128,10 +128,38 @@ Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part 
     
     res.attr("class") = "zdd";
     
-    mh.end("finished\n");
+    mh.end("finished");
     
     return res;   
 }    
+
+// [[Rcpp::export]]
+Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, 
+                             unsigned int lower, unsigned int upper) {
+  dd_ptr dd = zdd["dd"];
+  tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"]);
+  
+  if (weights.size() != g.vertexSize())
+    throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
+  
+  unsigned int sum = std::accumulate(weights.begin(), weights.end(), 0);
+  int k = zdd["n_part"];
+  
+  ComponentWeightSpec cwspec(g, weights, lower, upper, zdd["noloop"], zdd["lookahead"]);
+  
+  dd->zddSubset(cwspec);
+  dd->zddReduce();
+  
+  zdd["dd"] = dd;
+  zdd["constrained"] = "min/max";
+  zdd["lower"] = lower;   
+  zdd["upper"] = upper;
+  
+  zdd.attr("class") = "zdd";
+  
+  return zdd; 
+}
+
 
 
 // [[Rcpp::export]]
@@ -142,54 +170,36 @@ Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, do
     if (weights.size() != g.vertexSize())
         throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
     
-    
     unsigned int sum = std::accumulate(weights.begin(), weights.end(), 0);
     int k = zdd["n_part"];
     
     int lower = static_cast<int>(floor(static_cast<double>(sum) / (ratio * (k - 1) + 1)));
     int upper = static_cast<int>(ceil(ratio * static_cast<double>(sum) / (ratio + (k - 1))));
     
-    ComponentRatioSpec crspec(g, weights, lower, upper,
-                              ratio, zdd["noloop"], zdd["lookahead"]);
+    MessageHandler mh;
+    mh.begin("started\n");
     
-    dd->zddSubset(crspec);
-    dd->zddReduce();
+    // FIXME: Not sure why this is broken
+    //
+    //ComponentRatioSpec crspec(g, weights, lower, upper,
+    //                          ratio, zdd["noloop"], zdd["lookahead"]);
+    //
+    //dd->zddSubset(crspec);
+    //dd->zddReduce();
     
-    zdd["dd"] = dd;
-    zdd["constrained"] = "ratio";
-    zdd["ratio"] = ratio;
-    zdd["lower"] = lower;   
-    zdd["upper"] = upper;
+    Rcpp::List new_zdd = min_max_constrain(zdd, weights, lower, upper);
     
-    zdd.attr("class") = "zdd";
+    new_zdd["dd"] = dd;
+    new_zdd["constrained"] = "ratio";
+    new_zdd["ratio"] = ratio;
+    new_zdd["lower"] = lower;   
+    new_zdd["upper"] = upper;
     
-    return zdd; 
+    new_zdd.attr("class") = "zdd";
+    
+    mh.end("finished");
+    
+    return new_zdd; 
 }
 
 
-// [[Rcpp::export]]
-Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, 
-                             unsigned int lower, unsigned int upper) {
-    dd_ptr dd = zdd["dd"];
-    tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"]);
-    
-    if (weights.size() != g.vertexSize())
-        throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
-    
-    unsigned int sum = std::accumulate(weights.begin(), weights.end(), 0);
-    int k = zdd["n_part"];
-    
-    ComponentWeightSpec cwspec(g, weights, lower, upper, zdd["noloop"], zdd["lookahead"]);
-
-    dd->zddSubset(cwspec);
-    dd->zddReduce();
-    
-    zdd["dd"] = dd;
-    zdd["constrained"] = "min/max";
-    zdd["lower"] = lower;   
-    zdd["upper"] = upper;
-    
-    zdd.attr("class") = "zdd";
-    
-    return zdd; 
-}

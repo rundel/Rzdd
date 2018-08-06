@@ -25,7 +25,7 @@ enum_part.list = function(adj, n_part = 2, weights = rep(1, length(adj)),
   if (!is.null(ratio)) {
     zdd = ratio_constrain(zdd, weights, ratio)
   } else if (!is.null(lower) & !is.null(upper)) {
-    stopifnot(lower < upper)
+    stopifnot(lower <= upper)
     zdd = min_max_constrain(zdd, weights, lower, upper)
   }
   

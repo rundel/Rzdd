@@ -6,13 +6,15 @@ r = raster::raster(nrows=n, ncols=n, xmn=0, xmx=n, ymn=0, ymx=n)
 p = sf::st_as_sf(raster::rasterToPolygons(r))
 p$layer = NULL
 
-res = Rzdd::partition(p, 2)
-
-plot(res)
+#res = Rzdd::partition(p, 2)
+#res = Rzdd::enum_part(p, lower=floor(n^2/2), upper=ceiling(n^2/2))
+res = Rzdd::enum_part(p, ratio=1)
 
 res
 
-solutions = partition_labels(res)
+#plot(res)
+
+solutions = partition_labels(res, sample_n = 100)
 
 
 
@@ -26,6 +28,6 @@ plots = purrr::map(
   }
 )
 
-#pdf("~/Desktop/test.pdf")
+pdf("~/Desktop/test.pdf")
 cowplot::plot_grid(plotlist = plots, scale = 0.95)
-#dev.off()
+dev.off()

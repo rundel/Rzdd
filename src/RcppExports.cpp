@@ -78,19 +78,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ratio_constrain
-Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, double ratio);
-RcppExport SEXP _Rzdd_ratio_constrain(SEXP zddSEXP, SEXP weightsSEXP, SEXP ratioSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type zdd(zddSEXP);
-    Rcpp::traits::input_parameter< std::vector<unsigned int> >::type weights(weightsSEXP);
-    Rcpp::traits::input_parameter< double >::type ratio(ratioSEXP);
-    rcpp_result_gen = Rcpp::wrap(ratio_constrain(zdd, weights, ratio));
-    return rcpp_result_gen;
-END_RCPP
-}
 // min_max_constrain
 Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, unsigned int lower, unsigned int upper);
 RcppExport SEXP _Rzdd_min_max_constrain(SEXP zddSEXP, SEXP weightsSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
@@ -102,6 +89,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< unsigned int >::type lower(lowerSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type upper(upperSEXP);
     rcpp_result_gen = Rcpp::wrap(min_max_constrain(zdd, weights, lower, upper));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ratio_constrain
+Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, double ratio);
+RcppExport SEXP _Rzdd_ratio_constrain(SEXP zddSEXP, SEXP weightsSEXP, SEXP ratioSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type zdd(zddSEXP);
+    Rcpp::traits::input_parameter< std::vector<unsigned int> >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< double >::type ratio(ratioSEXP);
+    rcpp_result_gen = Rcpp::wrap(ratio_constrain(zdd, weights, ratio));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -132,16 +132,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test_graph
-void test_graph(std::vector<std::vector<unsigned int>> adj_list);
-RcppExport SEXP _Rzdd_test_graph(SEXP adj_listSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj_list(adj_listSEXP);
-    test_graph(adj_list);
-    return R_NilValue;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_to_dot", (DL_FUNC) &_Rzdd_dd_to_dot, 1},
@@ -150,11 +140,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_cardinality", (DL_FUNC) &_Rzdd_dd_cardinality, 1},
     {"_Rzdd_dd_solutions", (DL_FUNC) &_Rzdd_dd_solutions, 2},
     {"_Rzdd_enum_part_alg", (DL_FUNC) &_Rzdd_enum_part_alg, 6},
-    {"_Rzdd_ratio_constrain", (DL_FUNC) &_Rzdd_ratio_constrain, 3},
     {"_Rzdd_min_max_constrain", (DL_FUNC) &_Rzdd_min_max_constrain, 4},
+    {"_Rzdd_ratio_constrain", (DL_FUNC) &_Rzdd_ratio_constrain, 3},
     {"_Rzdd_compute_frontier", (DL_FUNC) &_Rzdd_compute_frontier, 1},
     {"_Rzdd_partition_alg", (DL_FUNC) &_Rzdd_partition_alg, 6},
-    {"_Rzdd_test_graph", (DL_FUNC) &_Rzdd_test_graph, 1},
     {NULL, NULL, 0}
 };
 

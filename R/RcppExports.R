@@ -25,12 +25,12 @@ enum_part_alg <- function(adj, n_part = 2L, lookahead = TRUE, noloop = FALSE, ve
     .Call(`_Rzdd_enum_part_alg`, adj, n_part, lookahead, noloop, verbose, use_openmp)
 }
 
-ratio_constrain <- function(zdd, weights, ratio) {
-    .Call(`_Rzdd_ratio_constrain`, zdd, weights, ratio)
-}
-
 min_max_constrain <- function(zdd, weights, lower, upper) {
     .Call(`_Rzdd_min_max_constrain`, zdd, weights, lower, upper)
+}
+
+ratio_constrain <- function(zdd, weights, ratio) {
+    .Call(`_Rzdd_ratio_constrain`, zdd, weights, ratio)
 }
 
 compute_frontier <- function(adj_list) {
@@ -45,11 +45,5 @@ compute_frontier <- function(adj_list) {
 #' @export
 partition_alg <- function(adj_list, weights, min_w, max_w, n_part, reduce = TRUE) {
     .Call(`_Rzdd_partition_alg`, adj_list, weights, min_w, max_w, n_part, reduce)
-}
-
-#' @param adj_list Adjacency list
-#' @export
-test_graph <- function(adj_list) {
-    invisible(.Call(`_Rzdd_test_graph`, adj_list))
 }
 
