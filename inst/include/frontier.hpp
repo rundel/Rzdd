@@ -57,12 +57,28 @@ public:
     return F[i].find(value) != F[i].end();
   }
   
-  std::set<int> const& get_frontier(int i) const {
-    return F[i];
-  }
+
   
   int size(int i) const {
     return F[i].size();
+  }
+
+  std::vector<std::vector<int>> as_list() const {
+    std::vector<std::vector<int>> res;
+    for(auto const& f : F) {
+      std::vector<int> v(f.begin(), f.end());
+      res.push_back(v);
+    }
+    
+    return res;
+  }
+    
+  std::vector<std::set<int>> const& get_frontier() const {
+    return F;
+  }
+  
+  std::set<int> const& get_frontier(int i) const {
+    return F[i];
   }
   
   int get_frontier(int i, int j) const {
