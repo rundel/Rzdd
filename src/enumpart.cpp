@@ -29,6 +29,8 @@
 #include <vector>
 #include <fstream>
 
+#include <boost/lexical_cast.hpp>
+
 #include <tdzdd/DdSpecOp.hpp>
 #include <tdzdd/DdStructure.hpp>
 #include <tdzdd/util/Graph.hpp>
@@ -57,20 +59,22 @@ tdzdd::Graph tzdd_graph_from_edgelist(Rcpp::DataFrame const& edges) {
 }
 
 Rcpp::DataFrame tzdd_graph_to_edgelist(Graph const& g) {
-    std::vector<unsigned int> from, to;
+  std::vector<int> from, to;
+  
+  for (int a = 0; a < g.edgeSize(); ++a) {
+    auto e = g.edgeName(a);
     
+    //from.push_back(e.v1);
+    //to.push_back(e.v2);
     
-    for (int a = 0; a < g.edgeSize(); ++a) {
-        tdzdd::Graph::EdgeInfo const& e = g.edgeInfo(a);
-        
-        from.push_back(e.v1);
-        to.push_back(e.v2);
-    }
-    
-    return Rcpp::DataFrame::create(
-        Rcpp::Named("from") = from,
-        Rcpp::Named("to") = to
-    );
+    from.push_back(boost::lexical_cast<int>(e.first));
+    to.push_back(boost::lexical_cast<int>(e.second));
+  }
+  
+  return Rcpp::DataFrame::create(
+    Rcpp::Named("from") = from,
+    Rcpp::Named("to") = to
+  );
 }
 
 
@@ -90,7 +94,7 @@ tdzdd::Graph tdzdd_graph_from_adj(std::vector<std::vector<unsigned int>> const& 
 // [[Rcpp::export]]
 Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part = 2,
                          bool lookahead = true, bool noloop = false,
-                         bool verbose = true, bool use_openmp = true)
+                         bool verbose = true, bool use_openmp = true, bool reduce = true)
 {
     
     tdzdd::MessageHandler::showMessages(verbose);
@@ -110,7 +114,8 @@ Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part 
     GraphPartitionSpec gpspec(g, n_part, noloop, lookahead);
     
     tdzdd::DdStructure<2>* dd = new tdzdd::DdStructure<2>(gpspec, use_openmp);
-    dd->zddReduce();
+    if (reduce)
+      dd->zddReduce();
     
     dd_ptr p(dd);
     

@@ -1,16 +1,18 @@
 library(magrittr)
 library(ggplot2)
 
-n=5
+n=2
 r = raster::raster(nrows=n, ncols=n, xmn=0, xmx=n, ymn=0, ymx=n)
 p = sf::st_as_sf(raster::rasterToPolygons(r))
 p$layer = NULL
 
-res = Rzdd::enum_part(p, ratio=1, verbose=TRUE)
+res = Rzdd::enum_part(p, ratio=1, verbose=FALSE)
 
 res
 
 #plot(res)
+
+Rzdd:::dd_solutions(res$dd)
 
 solutions = partition_labels(res, sample_n = 100)
 
