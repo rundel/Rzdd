@@ -140,6 +140,9 @@ Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights,
   dd_ptr dd = zdd["dd"];
   tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"], zdd["labels"]);
   
+  Rcpp::Rcout << "Ratio:\n";
+  Rcpp::Rcout << g << "\n";
+  
   if (weights.size() != g.vertexSize())
     throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
   
@@ -162,8 +165,12 @@ Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights,
 
 // [[Rcpp::export]]
 Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, double ratio) {
+    
     dd_ptr dd = zdd["dd"];
-  tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"], zdd["labels"]);
+    tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"], zdd["labels"]);
+    
+    Rcpp::Rcout << "Ratio:\n";
+    Rcpp::Rcout << g << "\n";
     
     if (weights.size() != g.vertexSize())
         throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
