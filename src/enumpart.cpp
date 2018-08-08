@@ -146,7 +146,7 @@ Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights,
   if (weights.size() != g.vertexSize())
     throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
   
-  ComponentWeightSpec cwspec(g, weights, lower, upper, zdd["noloop"], zdd["lookahead"]);
+  ComponentWeightSpec cwspec(g, zdd["labels"], weights, lower, upper, zdd["noloop"], zdd["lookahead"]);
   
   dd->zddSubset(cwspec);
   dd->zddReduce();

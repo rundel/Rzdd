@@ -334,25 +334,22 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
 
 public:
     // weight_list: [weight of vertex 1, weight of vertex 2,..., weight of vertex m]
-    ComponentRatioSpec(Graph const& graph, const std::vector<uint32_t>& weight_list,
+    ComponentRatioSpec(Graph const& graph, 
+                       std::vector<std::string> const& vertices,
+                       std::vector<uint32_t> const& weight_list,
                        uint32_t lower, uint32_t upper, double ratio,
-            bool noLoop = false, bool lookahead = true)
+                       bool noLoop = false, bool lookahead = true)
             : graph(graph), m(graph.vertexSize()), n(graph.edgeSize()),
               lower(lower), upper(upper), ratio(ratio),
               mateSize(graph.maxFrontierSize()), initialMate(1 + m + mateSize),
               noLoop(noLoop), lookahead(lookahead) {
         this->setArraySize(mateSize);
 
-        for (int v = 1; v <= m; ++v) {
-            std::ostringstream oss;
-            oss << v;
-            int u = graph.getVertex(oss.str());
-            initialMate[u] = Mate(ComponentRatioSpecMate::
-                                  Offset(weight_list[v - 1]));
-            //std::cerr << v << ":" << graph.getVertex(oss.str()) << ":" << weight_list[graph.
-            //                         getVertex(oss.str()) - 1] << " ";
+        for (int v = 0; v < m; ++v) {
+            int u = graph.getVertex(vertices[v]);
+            initialMate[u] = Mate(ComponentRatioSpecMate::Offset(weight_list[v]));
         }
-        //std::cerr << std::endl;
+        
         for (int i = 0; i < n; ++i) {
             const Graph::EdgeInfo e = graph.edgeInfo(i);
             //std::cerr << e.v1 << " " << e.v2 << std::endl;

@@ -311,21 +311,20 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
 
 public:
     // weight_list: [weight of vertex 1, weight of vertex 2,..., weight of vertex m]
-    ComponentWeightSpec(Graph const& graph, const std::vector<uint32_t>& weight_list,
+    ComponentWeightSpec(Graph const& graph, 
+                        std::vector<std::string> const& vertices,
+                        const std::vector<uint32_t>& weight_list,
                         uint32_t lower, uint32_t upper,
-            bool noLoop = false, bool lookahead = true)
+                        bool noLoop = false, bool lookahead = true)
             : graph(graph), m(graph.vertexSize()), n(graph.edgeSize()),
               lower(lower), upper(upper),
               mateSize(graph.maxFrontierSize()), initialMate(1 + m + mateSize),
               noLoop(noLoop), lookahead(lookahead) {
         this->setArraySize(mateSize);
 
-        for (int v = 1; v <= m; ++v) {
-            std::ostringstream oss;
-            oss << v;
-            int u = graph.getVertex(oss.str());
-            initialMate[u] = Mate(ComponentWeightSpecMate::
-                                  Offset(weight_list[v - 1]));
+        for (int v = 0; v < m; ++v) {
+            int u = graph.getVertex(vertices[v]);
+            initialMate[u] = Mate(ComponentWeightSpecMate::Offset(weight_list[v]));
         }
     }
 
