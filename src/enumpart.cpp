@@ -29,8 +29,6 @@
 #include <vector>
 #include <fstream>
 
-#include <boost/lexical_cast.hpp>
-
 #include <tdzdd/DdSpecOp.hpp>
 #include <tdzdd/DdStructure.hpp>
 #include <tdzdd/util/Graph.hpp>

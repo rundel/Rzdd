@@ -26,7 +26,8 @@ enum_part.list = function(adj, labels = as.character(seq(1,length(adj))),
                           ratio = NULL, lower = NULL, upper = NULL,
                           use_openmp = TRUE, verbose=TRUE)
 {
-  zdd = enum_part_alg(adj, n_part=n_part, use_openmp=use_openmp, verbose=verbose, reduce=TRUE)
+  zdd = enum_part_alg(adj, labels=labels, n_part=n_part, 
+                      use_openmp=use_openmp, verbose=verbose, reduce=TRUE)
   
   if (!is.null(ratio)) {
     zdd = ratio_constrain(zdd, weights, ratio)
