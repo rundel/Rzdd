@@ -68,7 +68,8 @@ Rcpp::DataFrame tzdd_graph_to_edgelist(Graph const& g) {
   
   return Rcpp::DataFrame::create(
     Rcpp::Named("from") = from,
-    Rcpp::Named("to") = to
+    Rcpp::Named("to") = to,
+    Rcpp::Named("stringsAsFactors") = false
   );
 }
 
