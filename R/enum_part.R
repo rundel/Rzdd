@@ -10,13 +10,19 @@ enum_part.sfc = function(sfc, ...) {
 }
 
 #' @export
-enum_part.sf = function(sf, ...) {
+enum_part.sf = function(sf, labels = NULL, ...) {
   require_sf()
-  enum_part(sf_to_adj(sf), ...)
+  if (is.null(labels))
+    labels = as.character(seq(1,nrow(sf)))
+  else
+    labels = sf[[labels]]
+  
+  enum_part(sf_to_adj(sf), labels = labels, ...)
 }
 
 #' @export
-enum_part.list = function(adj, n_part = 2, weights = rep(1, length(adj)),
+enum_part.list = function(adj, labels = as.character(seq(1,length(adj))),
+                          n_part = 2, weights = rep(1, length(adj)),
                           ratio = NULL, lower = NULL, upper = NULL,
                           use_openmp = TRUE, verbose=TRUE)
 {

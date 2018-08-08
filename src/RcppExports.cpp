@@ -63,19 +63,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // enum_part_alg
-Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part, bool lookahead, bool noloop, bool verbose, bool use_openmp, bool reduce);
-RcppExport SEXP _Rzdd_enum_part_alg(SEXP adjSEXP, SEXP n_partSEXP, SEXP lookaheadSEXP, SEXP noloopSEXP, SEXP verboseSEXP, SEXP use_openmpSEXP, SEXP reduceSEXP) {
+Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, std::vector<std::string> labels, int n_part, bool lookahead, bool noloop, bool verbose, bool use_openmp, bool reduce);
+RcppExport SEXP _Rzdd_enum_part_alg(SEXP adjSEXP, SEXP labelsSEXP, SEXP n_partSEXP, SEXP lookaheadSEXP, SEXP noloopSEXP, SEXP verboseSEXP, SEXP use_openmpSEXP, SEXP reduceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj(adjSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type labels(labelsSEXP);
     Rcpp::traits::input_parameter< int >::type n_part(n_partSEXP);
     Rcpp::traits::input_parameter< bool >::type lookahead(lookaheadSEXP);
     Rcpp::traits::input_parameter< bool >::type noloop(noloopSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type use_openmp(use_openmpSEXP);
     Rcpp::traits::input_parameter< bool >::type reduce(reduceSEXP);
-    rcpp_result_gen = Rcpp::wrap(enum_part_alg(adj, n_part, lookahead, noloop, verbose, use_openmp, reduce));
+    rcpp_result_gen = Rcpp::wrap(enum_part_alg(adj, labels, n_part, lookahead, noloop, verbose, use_openmp, reduce));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,7 +141,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_dd_size", (DL_FUNC) &_Rzdd_dd_size, 1},
     {"_Rzdd_dd_cardinality", (DL_FUNC) &_Rzdd_dd_cardinality, 1},
     {"_Rzdd_dd_solutions", (DL_FUNC) &_Rzdd_dd_solutions, 2},
-    {"_Rzdd_enum_part_alg", (DL_FUNC) &_Rzdd_enum_part_alg, 7},
+    {"_Rzdd_enum_part_alg", (DL_FUNC) &_Rzdd_enum_part_alg, 8},
     {"_Rzdd_min_max_constrain", (DL_FUNC) &_Rzdd_min_max_constrain, 4},
     {"_Rzdd_ratio_constrain", (DL_FUNC) &_Rzdd_ratio_constrain, 3},
     {"_Rzdd_compute_frontier", (DL_FUNC) &_Rzdd_compute_frontier, 1},

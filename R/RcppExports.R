@@ -21,8 +21,8 @@ dd_solutions <- function(dd, use_obi = TRUE) {
     .Call(`_Rzdd_dd_solutions`, dd, use_obi)
 }
 
-enum_part_alg <- function(adj, n_part = 2L, lookahead = TRUE, noloop = FALSE, verbose = TRUE, use_openmp = TRUE, reduce = TRUE) {
-    .Call(`_Rzdd_enum_part_alg`, adj, n_part, lookahead, noloop, verbose, use_openmp, reduce)
+enum_part_alg <- function(adj, labels, n_part = 2L, lookahead = TRUE, noloop = FALSE, verbose = TRUE, use_openmp = TRUE, reduce = TRUE) {
+    .Call(`_Rzdd_enum_part_alg`, adj, labels, n_part, lookahead, noloop, verbose, use_openmp, reduce)
 }
 
 min_max_constrain <- function(zdd, weights, lower, upper) {

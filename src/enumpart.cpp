@@ -59,16 +59,13 @@ tdzdd::Graph tzdd_graph_from_edgelist(Rcpp::DataFrame const& edges) {
 }
 
 Rcpp::DataFrame tzdd_graph_to_edgelist(Graph const& g) {
-  std::vector<int> from, to;
+  std::vector<std::string> from, to;
   
   for (int a = 0; a < g.edgeSize(); ++a) {
     auto e = g.edgeName(a);
-    
-    //from.push_back(e.v1);
-    //to.push_back(e.v2);
-    
-    from.push_back(boost::lexical_cast<int>(e.first));
-    to.push_back(boost::lexical_cast<int>(e.second));
+
+    from.push_back(e.first);
+    to.push_back(e.second);
   }
   
   return Rcpp::DataFrame::create(
@@ -78,11 +75,12 @@ Rcpp::DataFrame tzdd_graph_to_edgelist(Graph const& g) {
 }
 
 
-tdzdd::Graph tdzdd_graph_from_adj(std::vector<std::vector<unsigned int>> const& adj_list) {
+tdzdd::Graph tdzdd_graph_from_adj(std::vector<std::vector<unsigned int>> const& adj_list,
+                                  std::vector<std::string> const& labels) {
     Graph g;
     for(size_t i=0; i != adj_list.size(); ++i) {
         for(size_t j=0; j != adj_list[i].size(); ++j) {
-            g.addEdge(std::to_string(i+1), std::to_string(adj_list[i][j]));    
+            g.addEdge(labels[i], labels[adj_list[i][j]-1]);    
         }
     }
     g.update();
@@ -92,8 +90,8 @@ tdzdd::Graph tdzdd_graph_from_adj(std::vector<std::vector<unsigned int>> const& 
 
 
 // [[Rcpp::export]]
-Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part = 2,
-                         bool lookahead = true, bool noloop = false,
+Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, std::vector<std::string> labels,
+                         int n_part = 2, bool lookahead = true, bool noloop = false,
                          bool verbose = true, bool use_openmp = true, bool reduce = true)
 {
     
@@ -101,7 +99,7 @@ Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part 
     tdzdd::MessageHandler mh;
     mh.begin("started\n");
 
-    tdzdd::Graph g = tdzdd_graph_from_adj(adj);
+    tdzdd::Graph g = tdzdd_graph_from_adj(adj, labels);
     
     int const m = g.vertexSize();
     int const n = g.edgeSize();
@@ -122,6 +120,7 @@ Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part 
     Rcpp::List res = Rcpp::List::create(
         Rcpp::Named("type")   = "enumpart",
         Rcpp::Named("adj")    = adj,
+        Rcpp::Named("labels") = labels,
         Rcpp::Named("edges")  = tzdd_graph_to_edgelist(g),
         Rcpp::Named("n_part") = n_part,
         Rcpp::Named("dd")     = p,
@@ -140,13 +139,10 @@ Rcpp::List enum_part_alg(std::vector<std::vector<unsigned int>> adj, int n_part 
 Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, 
                              unsigned int lower, unsigned int upper) {
   dd_ptr dd = zdd["dd"];
-  tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"]);
+  tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"], zdd["labels"]);
   
   if (weights.size() != g.vertexSize())
     throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
-  
-  unsigned int sum = std::accumulate(weights.begin(), weights.end(), 0);
-  int k = zdd["n_part"];
   
   ComponentWeightSpec cwspec(g, weights, lower, upper, zdd["noloop"], zdd["lookahead"]);
   
@@ -168,7 +164,7 @@ Rcpp::List min_max_constrain(Rcpp::List zdd, std::vector<unsigned int> weights,
 // [[Rcpp::export]]
 Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, double ratio) {
     dd_ptr dd = zdd["dd"];
-    tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"]);
+  tdzdd::Graph g = tdzdd_graph_from_adj(zdd["adj"], zdd["labels"]);
     
     if (weights.size() != g.vertexSize())
         throw std::runtime_error("ERROR: Incorrect number of vertex weights provided.");
