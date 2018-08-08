@@ -42,8 +42,9 @@ partition_labels = function(res, sample_n = NULL) {
     function(solution) {
       el = res$edges[solution,c("from","to")]
       g = igraph::graph_from_edgelist(as.matrix(el), FALSE)
+      comps = igraph::components(g)[["membership"]]
       
-      igraph::components(g)[["membership"]]
+      comps[res$labels] # reorder to match original data
     }
   )
 }
