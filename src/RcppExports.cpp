@@ -118,6 +118,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// graph_frontier_max_size
+int graph_frontier_max_size(std::vector<std::vector<unsigned int>> adj);
+RcppExport SEXP _Rzdd_graph_frontier_max_size(SEXP adjSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<unsigned int>> >::type adj(adjSEXP);
+    rcpp_result_gen = Rcpp::wrap(graph_frontier_max_size(adj));
+    return rcpp_result_gen;
+END_RCPP
+}
 // partition_alg
 Rcpp::List partition_alg(std::vector<std::vector<unsigned int>> adj_list, std::vector<weight_type> weights, weight_type min_w, weight_type max_w, int n_part, bool reduce);
 RcppExport SEXP _Rzdd_partition_alg(SEXP adj_listSEXP, SEXP weightsSEXP, SEXP min_wSEXP, SEXP max_wSEXP, SEXP n_partSEXP, SEXP reduceSEXP) {
@@ -145,6 +156,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rzdd_min_max_constrain", (DL_FUNC) &_Rzdd_min_max_constrain, 4},
     {"_Rzdd_ratio_constrain", (DL_FUNC) &_Rzdd_ratio_constrain, 3},
     {"_Rzdd_compute_frontier", (DL_FUNC) &_Rzdd_compute_frontier, 1},
+    {"_Rzdd_graph_frontier_max_size", (DL_FUNC) &_Rzdd_graph_frontier_max_size, 1},
     {"_Rzdd_partition_alg", (DL_FUNC) &_Rzdd_partition_alg, 6},
     {NULL, NULL, 0}
 };

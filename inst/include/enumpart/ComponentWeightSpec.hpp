@@ -35,8 +35,6 @@
 #include <tdzdd/DdSpec.hpp>
 #include <tdzdd/util/Graph.hpp>
 
-using namespace tdzdd;
-
 /*struct ComponentWeightSpecCount {
     int16_t comp; ///< uncolored edge component counter.
 
@@ -207,7 +205,7 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
         ComponentWeightSpecMate,2> {
     typedef ComponentWeightSpecMate Mate;
 
-    Graph const& graph;
+    tdzdd::Graph const& graph;
     int const m;
     int const n;
     int const lower;
@@ -217,7 +215,7 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
     bool const noLoop;
     bool const lookahead;
 
-    int takable(Mate const* mate, Graph::EdgeInfo const& e) const {
+    int takable(Mate const* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Mate const& w1 = mate[e.v1 - e.v0];
         Mate const& w2 = mate[e.v2 - e.v0];
 
@@ -243,7 +241,7 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
         return true;
     }
 
-    bool doTake(Mate* mate, Graph::EdgeInfo const& e) const {
+    bool doTake(Mate* mate, tdzdd::Graph::EdgeInfo const& e) const {
         if (!takable(mate, e)) return false;
 
         mate[0].mergeLists(mate[e.v1 - e.v0], mate[e.v2 - e.v0], mate);
@@ -251,7 +249,7 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
         return true;
     }
 
-    bool doNotTake(Mate* mate, Graph::EdgeInfo const& e) const {
+    bool doNotTake(Mate* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Mate& w1 = mate[e.v1 - e.v0];
         Mate& w2 = mate[e.v2 - e.v0];
 
@@ -276,8 +274,8 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
         return true;
     }
 
-    void update(Mate* mate, Graph::EdgeInfo const& e,
-            Graph::EdgeInfo const& ee) const {
+    void update(Mate* mate, tdzdd::Graph::EdgeInfo const& e,
+                tdzdd::Graph::EdgeInfo const& ee) const {
         int const d = ee.v0 - e.v0;
         assert(d >= 0);
         Mate* p1 = &mate[e.v1 - e.v0];
@@ -311,7 +309,7 @@ class ComponentWeightSpec: public tdzdd::PodArrayDdSpec<ComponentWeightSpec,
 
 public:
     // weight_list: [weight of vertex 1, weight of vertex 2,..., weight of vertex m]
-    ComponentWeightSpec(Graph const& graph, 
+    ComponentWeightSpec(tdzdd::Graph const& graph, 
                         std::vector<std::string> const& vertices,
                         const std::vector<uint32_t>& weight_list,
                         uint32_t lower, uint32_t upper,
@@ -347,7 +345,7 @@ public:
     int getChild(Mate* mate, int level, int take) const {
         assert(1 <= level && level <= n);
         int i = n - level;
-        Graph::EdgeInfo const* e = &graph.edgeInfo(i);
+        tdzdd::Graph::EdgeInfo const* e = &graph.edgeInfo(i);
 
         //std::cerr << "level = " << level << ", take = " << take;
         //for (int j = 0; j < mateSize; ++j) {
@@ -364,7 +362,7 @@ public:
 
         if (++i == n) return -1;
 
-        Graph::EdgeInfo const* ee = &graph.edgeInfo(i);
+        tdzdd::Graph::EdgeInfo const* ee = &graph.edgeInfo(i);
         update(mate, *e, *ee);
 
         while (lookahead) {

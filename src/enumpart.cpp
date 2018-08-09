@@ -23,11 +23,6 @@
  */
 
 #include <climits>
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
-#include <fstream>
 
 #include <tdzdd/DdSpecOp.hpp>
 #include <tdzdd/DdStructure.hpp>
@@ -37,55 +32,8 @@
 #include <enumpart/ComponentWeightSpec.hpp>
 #include <enumpart/ComponentRatioSpec.hpp>
 
+#include "tdzdd_graph_util.hpp"
 #include "Rzdd.h"
-
-tdzdd::Graph tzdd_graph_from_edgelist(Rcpp::DataFrame const& edges) {
-    Graph g;
-    
-    if (edges.size() != 2)
-        throw std::runtime_error("ERROR: expected two columns.");
-
-    Rcpp::IntegerVector from = edges[0];
-    Rcpp::IntegerVector to   = edges[1];
-    
-    for(size_t i=0; i != from.size(); ++i) {
-      g.addEdge(std::to_string(from[i]), std::to_string(to[i]));   
-    }
-    g.update();
-    
-    return g;
-}
-
-Rcpp::DataFrame tzdd_graph_to_edgelist(Graph const& g) {
-  std::vector<std::string> from, to;
-  
-  for (int a = 0; a < g.edgeSize(); ++a) {
-    auto e = g.edgeName(a);
-
-    from.push_back(e.first);
-    to.push_back(e.second);
-  }
-  
-  return Rcpp::DataFrame::create(
-    Rcpp::Named("from") = from,
-    Rcpp::Named("to") = to,
-    Rcpp::Named("stringsAsFactors") = false
-  );
-}
-
-
-tdzdd::Graph tdzdd_graph_from_adj(std::vector<std::vector<unsigned int>> const& adj_list,
-                                  std::vector<std::string> const& labels) {
-    Graph g;
-    for(size_t i=0; i != adj_list.size(); ++i) {
-        for(size_t j=0; j != adj_list[i].size(); ++j) {
-            g.addEdge(labels[i], labels[adj_list[i][j]-1]);    
-        }
-    }
-    g.update();
-    
-    return g;
-}
 
 
 // [[Rcpp::export]]
@@ -175,7 +123,7 @@ Rcpp::List ratio_constrain(Rcpp::List zdd, std::vector<unsigned int> weights, do
     int lower = static_cast<int>(floor(static_cast<double>(sum) / (ratio * (k - 1) + 1)));
     int upper = static_cast<int>(ceil(ratio * static_cast<double>(sum) / (ratio + (k - 1))));
     
-    MessageHandler mh;
+    tdzdd::MessageHandler mh;
     mh.begin("started\n");
     
     // FIXME: Not sure why this is broken

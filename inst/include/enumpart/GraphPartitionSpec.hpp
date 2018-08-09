@@ -34,8 +34,6 @@
 #include <tdzdd/DdSpec.hpp>
 #include <tdzdd/util/Graph.hpp>
 
-using namespace tdzdd;
-
 struct GraphPartitionSpecCount {
     int16_t comp; ///< uncolored edge component counter.
 
@@ -244,7 +242,7 @@ class GraphPartitionSpec: public tdzdd::HybridDdSpec<GraphPartitionSpec,
     typedef GraphPartitionSpecCount Count;
     typedef GraphPartitionSpecMate Mate;
 
-    Graph const& graph;
+    tdzdd::Graph const& graph;
     int const m;
     int const n;
     int const mateSize;
@@ -253,7 +251,7 @@ class GraphPartitionSpec: public tdzdd::HybridDdSpec<GraphPartitionSpec,
     bool const noLoop;
     bool const lookahead;
 
-    int takable(Count& c, Mate const* mate, Graph::EdgeInfo const& e) const {
+    int takable(Count& c, Mate const* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Mate const& w1 = mate[e.v1 - e.v0];
         Mate const& w2 = mate[e.v2 - e.v0];
 
@@ -288,7 +286,7 @@ class GraphPartitionSpec: public tdzdd::HybridDdSpec<GraphPartitionSpec,
         return true;
     }
 
-    bool doTake(Count& count, Mate* mate, Graph::EdgeInfo const& e) const {
+    bool doTake(Count& count, Mate* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Count c = count;
 
         if (!takable(c, mate, e)) return false;
@@ -298,7 +296,7 @@ class GraphPartitionSpec: public tdzdd::HybridDdSpec<GraphPartitionSpec,
         return true;
     }
 
-    bool doNotTake(Count& count, Mate* mate, Graph::EdgeInfo const& e) const {
+    bool doNotTake(Count& count, Mate* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Count c = count;
         Mate& w1 = mate[e.v1 - e.v0];
         Mate& w2 = mate[e.v2 - e.v0];
@@ -337,8 +335,8 @@ class GraphPartitionSpec: public tdzdd::HybridDdSpec<GraphPartitionSpec,
         return true;
     }
 
-    void update(Mate* mate, Graph::EdgeInfo const& e,
-            Graph::EdgeInfo const& ee) const {
+    void update(Mate* mate, tdzdd::Graph::EdgeInfo const& e,
+                tdzdd::Graph::EdgeInfo const& ee) const {
         int const d = ee.v0 - e.v0;
         assert(d >= 0);
         Mate* p1 = &mate[e.v1 - e.v0];
@@ -380,7 +378,7 @@ class GraphPartitionSpec: public tdzdd::HybridDdSpec<GraphPartitionSpec,
     }
 
 public:
-    GraphPartitionSpec(Graph const& graph, int numCOMP = -1,
+    GraphPartitionSpec(tdzdd::Graph const& graph, int numCOMP = -1,
             bool noLoop = false, bool lookahead = true)
             : graph(graph), m(graph.vertexSize()), n(graph.edgeSize()),
               mateSize(graph.maxFrontierSize()), initialMate(1 + m + mateSize),
@@ -414,7 +412,7 @@ public:
     int getChild(Count& count, Mate* mate, int level, int take) const {
         assert(1 <= level && level <= n);
         int i = n - level;
-        Graph::EdgeInfo const* e = &graph.edgeInfo(i);
+        tdzdd::Graph::EdgeInfo const* e = &graph.edgeInfo(i);
 
         if (take) {
             if (!doTake(count, mate, *e)) return 0;
@@ -425,7 +423,7 @@ public:
 
         if (++i == n) return -1;
 
-        Graph::EdgeInfo const* ee = &graph.edgeInfo(i);
+        tdzdd::Graph::EdgeInfo const* ee = &graph.edgeInfo(i);
         update(mate, *e, *ee);
 
         while (lookahead) {

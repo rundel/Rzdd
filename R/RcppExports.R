@@ -37,6 +37,10 @@ compute_frontier <- function(adj_list) {
     .Call(`_Rzdd_compute_frontier`, adj_list)
 }
 
+graph_frontier_max_size <- function(adj) {
+    .Call(`_Rzdd_graph_frontier_max_size`, adj)
+}
+
 #' partition_alg
 #' 
 #' Blah blah blah

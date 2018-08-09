@@ -35,8 +35,6 @@
 #include <tdzdd/DdSpec.hpp>
 #include <tdzdd/util/Graph.hpp>
 
-using namespace tdzdd;
-
 struct ComponentRatioSpecCount {
     int32_t lower;
     int32_t upper;
@@ -205,7 +203,7 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
     typedef ComponentRatioSpecMate Mate;
     typedef ComponentRatioSpecCount Count;
 
-    Graph const& graph;
+    tdzdd::Graph const& graph;
     int const m;
     int const n;
     int const lower;
@@ -234,7 +232,7 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
         return true;
     }
 
-    int takable(Count& count, Mate const* mate, Graph::EdgeInfo const& e) const {
+    int takable(Count& count, Mate const* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Mate const& w1 = mate[e.v1 - e.v0];
         Mate const& w2 = mate[e.v2 - e.v0];
 
@@ -263,7 +261,7 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
         return true;
     }
 
-    bool doTake(Count& count, Mate* mate, Graph::EdgeInfo const& e) const {
+    bool doTake(Count& count, Mate* mate, tdzdd::Graph::EdgeInfo const& e) const {
         if (!takable(count, mate, e)) return false;
 
         mate[0].mergeLists(mate[e.v1 - e.v0], mate[e.v2 - e.v0], mate);
@@ -271,7 +269,7 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
         return true;
     }
 
-    bool doNotTake(Count& count, Mate* mate, Graph::EdgeInfo const& e) const {
+    bool doNotTake(Count& count, Mate* mate, tdzdd::Graph::EdgeInfo const& e) const {
         Mate& w1 = mate[e.v1 - e.v0];
         Mate& w2 = mate[e.v2 - e.v0];
 
@@ -299,8 +297,8 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
         return true;
     }
 
-    void update(Mate* mate, Graph::EdgeInfo const& e,
-            Graph::EdgeInfo const& ee) const {
+    void update(Mate* mate, tdzdd::Graph::EdgeInfo const& e,
+                tdzdd::Graph::EdgeInfo const& ee) const {
         int const d = ee.v0 - e.v0;
         assert(d >= 0);
         Mate* p1 = &mate[e.v1 - e.v0];
@@ -334,7 +332,7 @@ class ComponentRatioSpec: public tdzdd::HybridDdSpec<ComponentRatioSpec,
 
 public:
     // weight_list: [weight of vertex 1, weight of vertex 2,..., weight of vertex m]
-    ComponentRatioSpec(Graph const& graph, 
+    ComponentRatioSpec(tdzdd::Graph const& graph, 
                        std::vector<std::string> const& vertices,
                        std::vector<uint32_t> const& weight_list,
                        uint32_t lower, uint32_t upper, double ratio,
@@ -351,7 +349,7 @@ public:
         }
         
         for (int i = 0; i < n; ++i) {
-            const Graph::EdgeInfo e = graph.edgeInfo(i);
+            const tdzdd::Graph::EdgeInfo e = graph.edgeInfo(i);
             //std::cerr << e.v1 << " " << e.v2 << std::endl;
         }
 
@@ -378,7 +376,7 @@ public:
     int getChild(Count& count, Mate* mate, int level, int take) const {
         assert(1 <= level && level <= n);
         int i = n - level;
-        Graph::EdgeInfo const* e = &graph.edgeInfo(i);
+        tdzdd::Graph::EdgeInfo const* e = &graph.edgeInfo(i);
 
         //std::cerr << "level = " << level << ", take = " << take;
         //for (int j = 0; j < mateSize; ++j) {
@@ -399,7 +397,7 @@ public:
 
         count = c;
 
-        Graph::EdgeInfo const* ee = &graph.edgeInfo(i);
+        tdzdd::Graph::EdgeInfo const* ee = &graph.edgeInfo(i);
         update(mate, *e, *ee);
 
         while (lookahead) {
