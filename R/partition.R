@@ -42,6 +42,12 @@ partition_labels = function(res, sample_n = NULL) {
     function(solution) {
       el = res$edges[solution,c("from","to")]
       g = igraph::graph_from_edgelist(as.matrix(el), FALSE)
+      
+      # Find vertices not in the edge list and add them to g
+      missing_vertices = setdiff(res$labels, names(igraph::V(g)))
+      if (length(missing_vertices) != 0)
+        g = igraph::add_vertices(g, length(missing_vertices), name = missing_vertices)
+      
       comps = igraph::components(g)[["membership"]]
       
       comps[res$labels] # reorder to match original data
