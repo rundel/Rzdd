@@ -14,7 +14,7 @@ res
 
 Rzdd:::dd_solutions(res$dd)
 
-solutions = partition_labels(res, sample_n = 100)
+solutions = Rzdd:::partition_labels(res)
 
 
 
@@ -28,6 +28,6 @@ plots = purrr::map(
   }
 )
 
-pdf("~/Desktop/test.pdf")
+#pdf("~/Desktop/test.pdf")
 cowplot::plot_grid(plotlist = plots, scale = 0.95)
-dev.off()
+#dev.off()
